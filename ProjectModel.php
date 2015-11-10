@@ -40,12 +40,10 @@ class ProjectModel {
      */
     public function get_records_by($field_name, $value) {
         $record_ids = $this->get_record_ids_by($field_name, $value);
-        print_r($record_ids);echo "<br/>";
         $records = array();
         foreach($record_ids as $record_id) {
             $records[] = $this->get_record_data($record_id);
         }
-        print_r($records);echo "<br/>";
         return $records;
     }
 
