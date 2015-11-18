@@ -25,6 +25,14 @@ class ProjectModel {
     /**
      *
      */
+    public function make_writeable($api_url, $api_token) {
+        $this->API_URL = $api_url;
+        $this->API_TOKEN = $api_token;
+    }
+
+    /**
+     *
+     */
     public function get_record_by($field_name, $value) {
         if($field_name == 'record') {
             return $this->get_record_data($value);
@@ -45,14 +53,6 @@ class ProjectModel {
             $records[] = $this->get_record_data($record_id);
         }
         return $records;
-    }
-
-    /**
-     *
-     */
-    public function make_writeable($api_url, $api_token) {
-        $this->API_URL = $api_url;
-        $this->API_TOKEN = $api_token;
     }
 
     /**
