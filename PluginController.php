@@ -19,7 +19,6 @@ class PluginController {
     }
 
     public function render($template, $params=array()) {
-        $params['PID'] = $this->CONFIG['project_ids']['participant_pid'];
         return $this->TWIG->render($template, $params);
     }
 
