@@ -1,4 +1,7 @@
 <?php
+/**
+ * An object to help with handling REDCap Plugin HTTP requests.
+ */
 class PluginController {
 
     protected $GET;
@@ -10,12 +13,12 @@ class PluginController {
     protected $ERRORS;
 
     public function __construct($_GET, $_POST, $twig, $conn, $USERID, $CONFIG) {
-        $this->GET = $_GET;
-        $this->POST = $_POST;
-        $this->TWIG = $twig;
-        $this->CONN = $conn;
-        $this->USER = $USERID;
-        $this->CONFIG = $CONFIG;
+        $this->GET = $_GET; // Request GET vars
+        $this->POST = $_POST; // Request POST vars
+        $this->TWIG = $twig; // Twig templating engine
+        $this->CONN = $conn; // REDCap database connection
+        $this->USER = $USERID;  // Currently logged in user's REDCap user id
+        $this->CONFIG = $CONFIG; // Plugin configuration
     }
 
     /**

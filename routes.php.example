@@ -1,0 +1,13 @@
+<?php
+// Route actions to controllers based on request parameters.
+function route($REQUEST) {
+    switch ($REQUEST['action']) {
+        case 'this':
+            return 'ThisController';
+        case 'that':
+            return 'ThatController';
+        default:
+            return 'NotFoundController';
+    }
+}
+?>

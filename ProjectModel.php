@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Provides an interface to REDCap record data, for a given project.
+ */
 class ProjectModel {
 
     protected $PID;
@@ -9,13 +11,17 @@ class ProjectModel {
     protected $FIELD_NAME_MAP;
     protected $REVERSE_FIELD_NAME_MAP;
 
-    /**
-     *
-     */
     public function __construct($pid, $conn, $field_name_map=array()) {
         $this->PID = $pid;
         $this->CONN = $conn;
 
+        /**
+         * This field map allows for the field names used in plugin code to
+         * differ from those defined in associated REDCap projects.  This allows
+         * REDCap project field names to change without heavily impacting plugin
+         * code. If a given field lacks an associated mapped field name, then
+         * the REDCap field name will be used.
+         */
         if(!empty($field_name_map)) {
             $this->FIELD_NAME_MAP = $field_name_map;
             $this->REVERSE_FIELD_NAME_MAP = array_flip($field_name_map);
@@ -23,7 +29,7 @@ class ProjectModel {
     }
 
     /**
-     *
+     * Provide a REDCap API URL and project API token to make writeable.
      */
     public function make_writeable($api_url, $api_token) {
         $this->API_URL = $api_url;
@@ -31,7 +37,8 @@ class ProjectModel {
     }
 
     /**
-     *
+     * Return the record data of the first record which matches the given
+     * field/value pair.
      */
     public function get_record_by($field_name, $value) {
         if($field_name == 'record') {
@@ -44,7 +51,8 @@ class ProjectModel {
     }
 
     /**
-     *
+     * Return the record data of all of the records that match the given
+     * field/value pair.
      */
     public function get_records_by($field_name, $value) {
         $record_ids = $this->get_record_ids_by($field_name, $value);
@@ -88,7 +96,8 @@ class ProjectModel {
     }
 
     /**
-     *
+     *  Given a field name, or an array of field/value pairs, map the field
+     *  names using the field name map provided to the constructor.
      */
     protected function fnmap($map_target, $reverse=false) {
         if($reverse) {
@@ -121,9 +130,13 @@ class ProjectModel {
     }
 
     /**
-     *
+     * Executes the given SQL query with the given bind parameters.
      */
     protected function execute_query($query, $bind_params) {
+        // TODO: Discover bind parameter type on-the-fly, instead of requiring
+        // that it be passed in as the first element of the $bind_param 
+        // parameter.
+
         $fields = $results = array();
         $stmt = $this->CONN->stmt_init();
         if($stmt->prepare($query)) {
@@ -151,50 +164,19 @@ class ProjectModel {
         return $results;
     }
 
-    protected function test_execute_query($query, $params) {
-        $fields = array();
-        $bind_params = array();
-        $results = array();
-
-        $stmt = $this->CONN->stmt_init();
-        if($stmt->prepare($query)) {
-            $types = '';
-            foreach($params as $param) {
-                if(is_string($param)) {
-                    $types .= 's';
-                } else if(is_int($param)) {
-                    $types .= 'i';
-                } else if(is_float($param)) {
-                    $types .= 'd';
-                } else {
-                    $types .= 'b';
-                }
-            }
-
-            $bind_params[] = $types;
-        }
-    }
-
 
     /**
-     *
+     * Get the first record id in the project which is assoicated with the given
+     * field/value pair.
      */
-
-/*    public function get_record_by_id($record_id, $in_redcap_format=true) {
-        if($in_redcap_format) {
-            require_once(APP_PATH_DOCROOT.'Classes/Records.php');
-            return Records::getData('array', $record);
-        } else {
-            return get_record_by('record', $record_id);
-        }
-}*/
     protected function get_record_id_by($field_name, $value) {
         $record_ids = $this->get_record_ids_by($field_name, $value);
         return $record_ids[0];
     }
 
     /**
-     *
+     * Get all record ids in the project which are associated with the given
+     * field/value pair.
      */
     protected function get_record_ids_by($field_name, $value) {
         $bind_pattern = (is_integer($value) ? 'isi' : 'iss');
@@ -217,23 +199,32 @@ class ProjectModel {
     }
 
     /**
-     *
+     * Return all record data associated with the given $record_id.  If
+     * $in_redcap_format is set to "true" REDCap's native Record object will be
+     * used instead of a direct SQL query (this is sometimes useful for
+     * compatibility with other REDCap classes, such as LogicTester).
      */
-    protected function get_record_data($record_id) {
-        $query = 'SELECT field_name, value '.
-                 'FROM redcap_data '.
-                 'WHERE project_id=? '.
-                 'AND record=?';
+    protected function get_record_data($record_id, $in_redcap_format=false) {
+        if($in_redcap_format) {
+            // TODO:  Apply fnmap to result???
+            require_once(APP_PATH_DOCROOT.'Classes/Records.php');
+            return Records::getData('array', $record);
+        } else {
+            $query = 'SELECT field_name, value '.
+                     'FROM redcap_data '.
+                     'WHERE project_id=? '.
+                     'AND record=?';
 
-        $params = array('ii', $this->PID, $record_id);
-        $result_data = $this->execute_query($query, $params);
+            $params = array('ii', $this->PID, $record_id);
+            $result_data = $this->execute_query($query, $params);
 
-        // Collapse record data into a single assoc. array
-        $record_data = array();
-        foreach($result_data as $row) {
-            $record_data[$row['field_name']] = $row['value'];
+            // Collapse record data into a single assoc. array
+            $record_data = array();
+            foreach($result_data as $row) {
+                $record_data[$row['field_name']] = $row['value'];
+            }
+
+            return $this->fnmap($record_data, true);
         }
-
-        return $this->fnmap($record_data, true);
     }
 }
