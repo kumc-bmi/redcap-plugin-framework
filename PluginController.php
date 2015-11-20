@@ -18,21 +18,45 @@ class PluginController {
         $this->CONFIG = $CONFIG;
     }
 
-    public function render($template, $params=array()) {
+    /**
+     * Handles the internal routing of the HTTP request.
+     */
+    public function process_request() {
+        if(!empty($this->POST)) {
+            return $this->handlePOST();
+        } else {
+            return $this->handleGET();
+        }
+    }
+
+    /**
+     * Wrapper for Twig's render method. Processes template and returns result
+     * HTML.
+     */
+    protected function render($template, $params=array()) {
         return $this->TWIG->render($template, $params);
     }
 
-    public function handleGET() {
+    /**
+     * Handle HTTP GET request.
+     */
+    protected function handleGET() {
         /* ... Do the stuff ... */
 
         return $this->render('default.html', array());
     }
 
-    public function validatePOST() {
+    /**
+     * Placeholder method for valuidation of POST data. 
+     */
+    protected function validatePOST() {
         return true;
     }
 
-    public function handlePOST() {
+    /**
+     * Handle HTTP POST request.
+     */
+    protected function handlePOST() {
         // handlePOST forwards to handleGET unless redefined.
         return $this->handleGET();
 
@@ -46,12 +70,47 @@ class PluginController {
         // }
     }
 
-    public function process_request() {
-        if(!empty($this->POST)) {
-            return $this->handlePOST();
-        } else {
-            return $this->handleGET();
+    /**
+     * Generates a simple, per-request, CSRF token for use in form submission.
+     */
+    protected function generate_csrf_token() {
+        
+        if(!isset($_SESSION['repower_csrf_tokens'])) { 
+            $_SESSION['repower_csrf_tokens'] = array();
         }
+
+        $csrf_token = md5(mt_rand());
+        while(in_array($csrf_token, $_SESSION['repower_csrf_tokens'])) {
+            $csrf_token = md5(mt_rand());
+        } 
+        $_SESSION['repower_csrf_tokens'][] = $csrf_token;
+
+        return $csrf_token;
+    }
+
+    /**
+     * Verifies that the given CSRF token is valid.  If a token is not passed in
+     * as a parameter, then the method will use the "csrf_token" POST var if
+     * available.
+     *
+     * When a token is verified it is removed form the session token store.
+     */
+    protected function verify_csrf_token($token=null) {
+        if(!$token and isset($this->POST['csrf_token'])) {
+            $token = $this->POST['csrf_token'];
+        }
+
+        if(isset($_SESSION['repower_csrf_tokens'])) {
+            $key = array_search(
+                $this->POST['csrf_token'],
+                $_SESSION['repower_csrf_tokens']
+            );
+            if($key !== false) {
+                unset($_SESSION['repower_csrf_tokens'][$key]);
+                return true;
+            }
+        }
+        return false;
     }
 }
 ?>
