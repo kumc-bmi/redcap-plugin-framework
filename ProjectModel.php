@@ -39,8 +39,8 @@ class ProjectModel {
      * Provide a REDCap API URL and project API token to make writeable.
      * NOTE: Maybe this should just be rolled into the constructor.
      *
-     * @param $api_url Full REDCap API URL path
-     * @param $api_token A project specific API token (with write priviledges)
+     * @param string $api_url Full REDCap API URL path
+     * @param string $api_token A project specific API token (with write priviledges)
      */
     public function make_writeable($api_url, $api_token) {
         $this->API_URL = $api_url;
@@ -377,7 +377,8 @@ class ProjectModel {
                      'WHERE project_id=? '.
                      'AND record=?';
 
-            $params = array('ii', $this->PID, $record_id);
+            $bind_pattern = (is_integer($record_id) ? 'ii' : 'is');
+            $params = array($bind_pattern, $this->PID, $record_id);
             $result_data = $this->execute_query($query, $params);
 
             // Collapse record data into a single assoc. array
