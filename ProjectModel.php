@@ -89,12 +89,13 @@ class ProjectModel {
      * @return mixed[] An associative array of field_name / value pairs associated
      *         with the first matching record
      */
-    public function get_record_by($field_name, $value) {
+    public function get_record_by($field_name, $value, $event_id=null) {
         if($field_name == 'record') {
-            return $this->get_record_data($value);
+            return $this->get_record_data($value, $event_id);
         } else {
             return $this->get_record_data(
-                $this->get_record_id_by($field_name, $value)
+                $this->get_record_id_by($field_name, $value),
+                $event_id
             );
         }
     }
@@ -110,11 +111,11 @@ class ProjectModel {
      * @return mixed[] An array of matching records, each represented by an nested
      *         associative array of field_name / value pairs.
      */
-    public function get_records_by($field_name, $value) {
-        $record_ids = $this->get_record_ids_by($field_name, $value);
+    public function get_records_by($field_name, $value, $event_id=null) {
+        $record_ids = $this->get_record_ids_by($field_name, $value, $event_id);
         $records = array();
         foreach($record_ids as $record_id) {
-            $records[] = $this->get_record_data($record_id);
+            $records[] = $this->get_record_data($record_id, $event_id);
         }
         return $records;
     }
@@ -366,7 +367,7 @@ class ProjectModel {
      *        useful for compatibility with other REDCap classes, such as
      *        LogicTester).
      */
-    protected function get_record_data($record_id, $in_redcap_format=false) {
+    protected function get_record_data($record_id, $event_id=null, $in_redcap_format=false) {
         if($in_redcap_format) {
             // TODO:  Apply fnmap to result???
             require_once(APP_PATH_DOCROOT.'Classes/Records.php');
@@ -377,8 +378,16 @@ class ProjectModel {
                      'WHERE project_id=? '.
                      'AND record=?';
 
-            $bind_pattern = (is_integer($record_id) ? 'ii' : 'is');
-            $params = array($bind_pattern, $this->PID, $record_id);
+            if(is_null($event_id)) {
+                $bind_pattern = (is_integer($record_id) ? 'ii' : 'is');
+                $params = array($bind_pattern, $this->PID, $record_id);
+            } else {
+                $query .= ' AND event_id=?';
+                $bind_pattern = (is_integer($record_id) ? 'iii' : 'isi');
+                $params = array($bind_pattern, $this->PID, $record_id,
+                                $event_id);
+            }
+
             $result_data = $this->execute_query($query, $params);
 
             // Collapse record data into a single assoc. array
