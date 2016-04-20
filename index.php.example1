@@ -1,9 +1,8 @@
 <?php
 /**
  * PLUGIN NAME: Plugin Example 1 (using Plugin class)
- * DESCRIPTION: Developed by the University of Kansas Medical Center's Medical
- *              Informatics Department to supplement REDCap's native reporting 
- *              functionality where needed.
+ * DESCRIPTION: Example REDCAP plugin index.php which utilizes this light-weight
+ *              plugin framework.
  * 
  * NOTE: This index.php version can be copied "as is" and use in a new plugin 
  *       without modification.
