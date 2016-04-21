@@ -56,12 +56,18 @@ class Plugin {
     }
 
     /**
-     * An overridable method for including plugin authorization.
+     * An overridable method for handling plugin authorization.  This has two
+     * use cases:
+     *
+     * 1. To call the REDcap access control helper functions (commented out 
+     *    below) which halt execution, and called in the index.php.
+     * 2. To return a boolean result which will be used in the 
+     *    request_to_response method.
      */
     public function authorize() {
         // Limit access to plugin using REDCap helper functions
-        // REDCap::allowProjects(...);
-        // REDCap::allowUsers(...);
+        //REDCap::allowProjects(...);
+        //REDCap::allowUsers(REDCap::getUsers());
         return True;
     }
 
@@ -75,9 +81,13 @@ class Plugin {
     public function request_to_response(
         $_GET, $_POST, $_REQUEST, $router_file_path='routes.php'
     ) {
-        // Query router for relavent controller based on plugin $_REQUEST vars
-        require_once($router_file_path);
-        $ControllerClass = route($_REQUEST);
+        if(!$this->authorize()) {
+            $ControllerClass = 'NotFoundController';
+        } else {
+            // Query router for relavent controller based on $_REQUEST vars
+            require_once($router_file_path);
+            $ControllerClass = route($_REQUEST);
+        }
 
         // Include and instantiate controller class
         if(file_exists('controllers/'.$ControllerClass.'.php')) {

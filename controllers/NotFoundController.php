@@ -1,5 +1,5 @@
 <?php
-require_once('../PluginController.php');
+require_once(FRAMEWORK_ROOT.'PluginController.php');
 
 
 /**
