@@ -78,15 +78,15 @@ class PluginController {
      */
     protected function generate_csrf_token() {
         
-        if(!isset($_SESSION['repower_csrf_tokens'])) { 
-            $_SESSION['repower_csrf_tokens'] = array();
+        if(!isset($_SESSION['rpf_csrf_tokens'])) { 
+            $_SESSION['rpf_csrf_tokens'] = array();
         }
 
         $csrf_token = md5(mt_rand());
-        while(in_array($csrf_token, $_SESSION['repower_csrf_tokens'])) {
+        while(in_array($csrf_token, $_SESSION['rpf_csrf_tokens'])) {
             $csrf_token = md5(mt_rand());
         } 
-        $_SESSION['repower_csrf_tokens'][] = $csrf_token;
+        $_SESSION['rpf_csrf_tokens'][] = $csrf_token;
 
         return $csrf_token;
     }
@@ -103,13 +103,13 @@ class PluginController {
             $token = $this->POST['csrf_token'];
         }
 
-        if(isset($_SESSION['repower_csrf_tokens'])) {
+        if(isset($_SESSION['rpf_csrf_tokens'])) {
             $key = array_search(
                 $this->POST['csrf_token'],
-                $_SESSION['repower_csrf_tokens']
+                $_SESSION['rpf_csrf_tokens']
             );
             if($key !== false) {
-                unset($_SESSION['repower_csrf_tokens'][$key]);
+                unset($_SESSION['rpf_csrf_tokens'][$key]);
                 return true;
             }
         }
