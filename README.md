@@ -1,7 +1,5 @@
-CONTENTS OF THIS FILE
----------------------
+# REDCap Plugin Framework
 
- * Copyright
  * Introduction
  * Plugin Structure
  * Requirements
@@ -12,52 +10,44 @@ CONTENTS OF THIS FILE
  * Maintainers
 
 
-COPYRIGHT
----------
-Copyright (c) 2015 University of Kansas Medical Center
-
-
-INTRODUCTION
-------------
-This custom, lightweight, REDCap specific, MVC framework was developed to aid in
+### INTRODUCTION
+This is a lightweight, loose coupled, REDCap specific, MVC framework was developed to aid in
 the development of REDCap plugins which extend REDCap's functionality.
 
 
-FRAMEWORK STRUCTURE
--------------------
+### FRAMEWORK STRUCTURE
 To seperate business, data, and display logic a simplified Model-View-Controller
 (MVC) pattern was used to managed the complexity of creating REDCap plugins.
 This framework consists of:
 
- * index.php.example : An example index.php file which contains the "glue" that 
+ * `index.php.example`: An example `index.php` file which contains the "glue" that 
    connects the rest of a plugin's code with REDCap code.
 
- * PluginConfig.php : Contains the class definition of PluginConfig, which 
+ * `PluginConfig.php`: Contains the class definition of PluginConfig, which 
    provides an immutable configuration object built from a provided ini file.
 
- * PluginController: Contains the PluginController class definition, which 
+ * `PluginController.php`: Contains the PluginController class definition, which 
    provides a controler object to handle plugin specific HTTP requests.
 
- * ProjectModel: Contain the ProjectModel class definition, which provides an
+ * `ProjectModel.php`: Contain the ProjectModel class definition, which provides an
    abstracted interface to REDCap project record data.
 
- * routes.php.example: An example routes.php file to which routes incoming HTTP 
+ * `routes.php.example`: An example routes.php file to which routes incoming HTTP 
    requests the appropriate controllers to handle the request.
 
- * lib/ : Holds 3rd party packages used by the framework. Currently holds a
+ * `lib/`: Holds 3rd party packages used by the framework. Currently holds a
    version of the Twig rendering engine (http://twig.sensiolabs.org). 
 
- * README : This file.
+ * `README.md`: This file.
 
- * RestCallRequest.php: A file provided by REDCap to facilitate PHP based REDCap
+ * `RestCallRequest.php`: A file provided by REDCap to facilitate PHP based REDCap
    API calls.
 
 
-REQUIREMENTS
-------------
+### REQUIREMENTS
 This plugin framework requires the following to work correctly:
 
- * The redcap_connect.php file from the REDCap base install is required and 
+ * The `redcap_connect.php` file from the REDCap base install is required and 
    needs to be present in the root redcap directory (included in as a part of 
    the full REDCap install as of version 5.5.0).  Can also be found at:
    https://iwg.devguard.com/trac/redcap/browser/misc/redcap_connect.zip?format=rawthe
@@ -67,36 +57,22 @@ This plugin framework requires the following to work correctly:
    found at http://twig.sensiolabs.org.
 
 
-INSTALLATION
-------------
+### INSTALLATION
 Installation of this plugin framework consists of the following steps:
 
- 1. Make sure that the redcap_connect.php file described above is present in
+ 1. Make sure that the `redcap_connect.php` file described above is present in
     the local REDCap installation's root directory.
 
- 2. Clone the KUMC redcap-plugin-frame into the <redcap-root>/plugins 
-    directory.  Create the plugins directory if necessary.
+ 2. Clone the KUMC `redcap-plugin-framework` into the `<redcap-root>/plugins` 
+    directory.  Create the `plugins` directory if necessary.
 
- 3. Unpack the Twig-<version>.tar.gz file into 
-    <framework-root>/lib/twig/<version>/.
+ 3. Unpack the `Twig-<version>.tar.gz` file into 
+    `<framework-root>/lib/twig/<version>/`.
 
 
-CONFIGURATION
--------------
+### CONFIGURATION
 No configuration is required.
 
-
-TESTING
--------
-TODO!!!
-
-
-VALIDATION
-----------
-TODO!
-
-
-MAINTAINERS
------------
+### MAINTAINERS
 Current maintainers:
- * Michael Prittie (mprittie@kumc.edu)
+ * Michael Prittie <mprittie@kumc.edu>
