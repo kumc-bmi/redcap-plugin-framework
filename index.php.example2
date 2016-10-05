@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN NAME: Plugin Example
+ * PLUGIN NAME: Plugin Example 2 (without using the Plugin class)
  * DESCRIPTION: Example REDCAP plugin index.php which utilizes this light-weight
  *              plugin framework.
  * VERSION: 1.0
