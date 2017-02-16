@@ -1,19 +1,8 @@
 # REDCap Plugin Framework
 
- * Introduction
- * Plugin Structure
- * Requirements
- * Installation
- * Configuration
- * Testing
- * Validation
- * Maintainers
-
-
 ### INTRODUCTION
 This is a lightweight, loose coupled, REDCap specific, MVC framework was developed to aid in
 the development of REDCap plugins which extend REDCap's functionality.
-
 
 ### FRAMEWORK STRUCTURE
 To seperate business, data, and display logic a simplified Model-View-Controller
@@ -43,7 +32,6 @@ This framework consists of:
  * `RestCallRequest.php`: A file provided by REDCap to facilitate PHP based REDCap
    API calls.
 
-
 ### REQUIREMENTS
 This plugin framework requires the following to work correctly:
 
@@ -56,7 +44,6 @@ This plugin framework requires the following to work correctly:
    same popular templating syntax as Jinja2 and Django.  More information can be
    found at http://twig.sensiolabs.org.
 
-
 ### INSTALLATION
 Installation of this plugin framework consists of the following steps:
 
@@ -68,7 +55,6 @@ Installation of this plugin framework consists of the following steps:
 
  3. Unpack the `Twig-<version>.tar.gz` file into 
     `<framework-root>/lib/twig/<version>/`.
-
 
 ### CONFIGURATION
 No configuration is required.
