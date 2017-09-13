@@ -358,6 +358,81 @@ class ProjectModel {
         return $record_ids;
     }
 
+    /* NEW METHOD */
+
+    	/*
+	Generates the next record_id for the Project 
+	associated with the current Class object
+
+	Limitation: 
+	This function cannot generate next record_id 
+	if the project has alpha-numeric record_ids
+
+	returns int
+    	*/ 
+	public function get_next_record_id(){
+		
+        	$bind_pattern = 'i';
+
+        	$query =    'SELECT distinct record '.
+                	    'FROM redcap_data '.
+                    	    'WHERE project_id = ? ';
+                    
+        	$params = array($bind_pattern, $this->PID);
+        
+		$result_data = $this->execute_query($query, $params);
+        
+		foreach($result_data as $row) {
+            		$record_ids[] = $row['record'];
+        	}
+		/*
+		Here the ids in record_ids[] from the execution of query
+		are saved in string format. To get reliable maximum of 
+		record_ids converting them to integers.
+		*/
+        	for ($i=0;$i <count($record_ids);$i++){
+                	$int_rec_ids[] = intval($record_ids[$i]);
+        	}
+		// Calculating the maximum of the existing ids
+		$maximum = max($int_rec_ids);
+		
+		// Generating next record_id
+		$next_record_id = $maximum + 1;
+		
+        	return $next_record_id;
+	}
+
+
+	/*
+ 	Second way to generate next record_id 
+ 	This method depends on record_id_label of the project
+ 	*/
+
+	/* 
+	public function get_next_record_id($record_id_label){
+
+        	$allIds = REDCap::getData(
+                	   	$this->PID,
+                   		'array',
+                   		null,
+                   		$record_id_label
+
+        	);
+
+        	ksort($allIds);
+        	end($allIds);
+        	$recordId = key($allIds);
+
+        	$recordId = intval($recordId) + 1;
+
+        	while(array_key_exists($recordId, $allIds)) {
+                	$recordId++;
+        	}
+		return $recordID;
+	}
+
+	*/	
+
     /**
      * Return all record data associated with the given $record_id.
      *
